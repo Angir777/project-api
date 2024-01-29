@@ -26,6 +26,8 @@ docker run --rm -u "$(id -u):$(id -g)" -v $(pwd):/opt -w /opt laravelsail/php82-
 
 6. Zakończ: ctrl+c
 
+7. Dostosuj plik env i composer.json
+
 ## Uruchomienie dev (WSL2 + Docker)
 <ol>
     <li><code>docker run --rm -u "$(id -u):$(id -g)" -v $(pwd):/var/www/html -w /var/www/html laravelsail/php82-composer:latest composer install --ignore-platform-reqs</code></li>
@@ -77,9 +79,18 @@ https://spatie.be/index.php/docs/laravel-permission/v6/advanced-usage/uuid
 
 5. Uruchamiamy polecenie: php artisan config:clear
 
-6. Dodaj do modelu usera: HasRoles
+6. Dodaj do modelu usera: 
 
-7. Urochum migrację: php artisan migrate
+use Laravel\Passport\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
+HasRoles
 
+7. Zainstaluj passport:
 
+composer require laravel/passport
 
+8. Uruchum migrację: php artisan migrate
+
+9. Odinstaluj laravel/sanctum i usuń wystapienia w kodzie:
+
+composer remove laravel/sanctum
