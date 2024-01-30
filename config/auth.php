@@ -40,6 +40,13 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+
+        'api' => [
+            'driver' => 'passport',
+            'provider' => 'users',
+            'hash' => false,
+            'lifetime' => 60 * 24 * 30, // Token dostępu jest ważny 30 dni
+        ],
     ],
 
     /*
@@ -62,7 +69,7 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => App\Models\User::class,
+            'model' => App\Models\User\User::class,
         ],
 
         // 'users' => [
@@ -112,4 +119,11 @@ return [
 
     'password_timeout' => 10800,
 
+    /*
+    |--------------------------------------------------------------------------
+    | When signing out, log out of all devices
+    |--------------------------------------------------------------------------
+    */
+
+    'on_logout_revoke_all_tokens' => env('ON_LOGOUT_REVOKE_ALL_TOKENS', false)
 ];

@@ -1,32 +1,27 @@
-Czysty projekt Laravel
+## Czysty projekt Laravel
 
 GITHUB: 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
 
 ## Instalacja:
 
-composer create-project laravel/laravel example-app
+composer create-project laravel/laravel project-api
 
 ## Uruchomić docker projekt na WSL'u
-
-1. Pakiet 'laravel/sail' powinien być już zainstalowany.
-
-2. Utwóż plik 'docker-compose.yml'. 
-
-Wyjaśnienie niektórych opcji: 
-context - zawiera lokalizację pliku Dockerfile
-image - chyba musi mieć wersje jak z context
-
-3. Wrzuć projekt np. na github'a.
-
-4. W swoim WSL'u pobierz projekt i w głównym folderze projektu:
-
-docker run --rm -u "$(id -u):$(id -g)" -v $(pwd):/opt -w /opt laravelsail/php82-composer:latest composer install --ignore-platform-reqs
-
-5. Uruchaom polecenie: sail up
-
-6. Zakończ: ctrl+c
-
-7. Dostosuj plik env i composer.json
+<ol>
+    <li>Pakiet 'laravel/sail' powinien być już zainstalowany.</li>
+    <li>
+        Utwóż plik 'docker-compose.yml'.
+        <br>
+        Wyjaśnienie niektórych opcji: 
+        context - zawiera lokalizację pliku Dockerfile
+        image - chyba musi mieć wersje jak z context
+    </li>
+    <li>Wrzuć projekt np. na github'a.</li>
+    <li>W swoim WSL'u pobierz projekt i w głównym folderze projektu uruchom: <code>docker run --rm -u "$(id -u):$(id -g)" -v $(pwd):/opt -w /opt laravelsail/php82-composer:latest composer install --ignore-platform-reqs</code></li>
+    <li>Uruchaom polecenie: <code>sail up</code><br>Za pierwszym razem wszystko będzie sobie konfigurował.</li>
+    <li>Aby zakończyć daj: <code>ctrl+c</code></li>
+    <li>Dostosuj plik env i composer.json<br ><code>cp .env.example .env</code></li>
+</ol>
 
 ## Uruchomienie dev (WSL2 + Docker)
 <ol>
@@ -39,8 +34,7 @@ docker run --rm -u "$(id -u):$(id -g)" -v $(pwd):/opt -w /opt laravelsail/php82-
     <li><code>sail down -v</code> - usówanie zapisanych danych</li>
 </ol>
 
-## Uruchomienie prod
-Zobacz na dokumentacje (<code>https://laravel.com/docs/10.x/deployment</code>)
+## Uruchomienie prod (https://laravel.com/docs/10.x/deployment)
 <ol>
     <li><code>composer install --optimize-autoloader --no-dev</code></li>
     <li><code>php artisan config:cache</code></li>
@@ -61,36 +55,62 @@ Zobacz na dokumentacje (<code>https://laravel.com/docs/10.x/deployment</code>)
     <li>Permissions <code>https://shouts.dev/snippets/target-class-spatiepermissionmiddlewarerolemiddleware-does-not-exist</code></li>
 </ol>
 
-## Instalacja laravel-permission i usunięcie laravel/sanctum:
+## Instalacja laravel-permission oraz laravel/passport i usunięcie laravel/sanctum:
+<ol>
+    <li>Instalacja laravel-permission: <code>sail composer require spatie/laravel-permission</code></li>
+    <li>Dodanie do config/app.php w 'providers': Spatie\Permission\PermissionServiceProvider::class</li>
+    <li>Upublicznienie ustawień permission w configu i migracji: <code>sail artisan vendor:publish --provider="Spatie\Permission\PermissionServiceProvider"</code></li>
+    <li>Jeśli zamiast ID chcemy UUID to musimy zmodyfikować migracje, konfiguracje i model: https://spatie.be/index.php/docs/laravel-permission/v6/advanced-usage/uuid</li>
+    <li>Uruchamiamy polecenie: <code>sail artisan config:clear</code></li>
+    <li>
+        Dodaj do modelu usera: <br>
+        use Laravel\Passport\HasApiTokens;
+        use Spatie\Permission\Traits\HasRoles;
+        HasRoles
+    </li>
+    <li>Zainstaluj passport: <code>sail composer require laravel/passport</code></li>
+    <li>Uruchum migrację: <code>sail artisan migrate</code></li>
+    <li>Odinstaluj laravel/sanctum i usuń wystapienia w kodzie: <code>sail composer remove laravel/sanctum</code></li>
+    <li>
+        Zmodyfikuj Kernel.php<br>
+        <code>
+        'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
+        'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
+        'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
+        </code>
+    </li>
+</ol>
 
-1. Instalacja laravel-permission: composer require spatie/laravel-permission
+## Doinstaluj na poczatek
+<ol>
+    <li>
+        spatie/laravel-query-builder<br>
+        <code>sail composer require spatie/laravel-query-builder</code>
+        <code>sail artisan vendor:publish --provider="Spatie\QueryBuilder\QueryBuilderServiceProvider"</code>
+    </li>
+    <li>
+        laravel/telescope<br>
+        <code>sail composer require laravel/telescope --dev</code>
+        <code>sail artisan telescope:install</code>
+        <code>sail artisan migrate</code>
+        Dodaj do AppServiceProvider.php w register:<br>
+        <code>
+        if ($this->app->environment('local')) {
+            $this->app->register(\Laravel\Telescope\TelescopeServiceProvider::class);
+            $this->app->register(TelescopeServiceProvider::class);
+        }
+        </code>
+    </li>
+</ol>
 
-2. Dodanie do config/app.php w 'providers': 
+## Edycja plików w katalogu config
 
-Spatie\Permission\PermissionServiceProvider::class
+## Utworzenie jobs table
+<code>
+sail artisan queue:table
+sail artisan migrate
+</code>
 
-3. Upublicznienie ustawień permission w configu i migracji:
+## Podstawowe routs, migracje, seedery, modele, controllery od logowania i widoków users i roles
 
-php artisan vendor:publish --provider="Spatie\Permission\PermissionServiceProvider"
-
-4. Jeśli zamiast ID chcemy UUID to musimy zmodyfikować migracje, konfiguracje i model:
-
-https://spatie.be/index.php/docs/laravel-permission/v6/advanced-usage/uuid
-
-5. Uruchamiamy polecenie: php artisan config:clear
-
-6. Dodaj do modelu usera: 
-
-use Laravel\Passport\HasApiTokens;
-use Spatie\Permission\Traits\HasRoles;
-HasRoles
-
-7. Zainstaluj passport:
-
-composer require laravel/passport
-
-8. Uruchum migrację: php artisan migrate
-
-9. Odinstaluj laravel/sanctum i usuń wystapienia w kodzie:
-
-composer remove laravel/sanctum
+## Testy

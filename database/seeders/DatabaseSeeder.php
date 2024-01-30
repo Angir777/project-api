@@ -3,6 +3,10 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+
+use Database\Seeders\Auth\PermissionsTableSeeder;
+use Database\Seeders\Auth\RolesTableSeeder;
+use Database\Seeders\Auth\UsersTableSeeder;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -18,5 +22,14 @@ class DatabaseSeeder extends Seeder
         //     'name' => 'Test User',
         //     'email' => 'test@example.com',
         // ]);
+
+        // Wywołanie seedera od uprawnień
+        $this->call(PermissionsTableSeeder::class);
+
+        // Wywołanie seedera od ról
+        $this->call(RolesTableSeeder::class);
+
+        // Wywołanie seedera od użytkownikow
+        $this->call(UsersTableSeeder::class);
     }
 }
