@@ -1,4 +1,4 @@
-## Czysty projekt Laravel
+## Czysty projekt API na Laravel 
 
 GITHUB: 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
 
