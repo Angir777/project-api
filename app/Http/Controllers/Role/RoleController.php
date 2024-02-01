@@ -41,6 +41,7 @@ class RoleController extends Controller
 
     /**
      * @param Request $request
+     * 
      * @return JsonResponse
      */
     public function query(Request $request): JsonResponse
@@ -60,6 +61,7 @@ class RoleController extends Controller
     /**
      * @param Request $request
      * @param Role $role
+     * 
      * @return JsonResponse
      */
     public function getById(Request $request, Role $role): JsonResponse
@@ -69,25 +71,30 @@ class RoleController extends Controller
 
     /**
      * @param StoreRoleRequest $request
+     * 
      * @return JsonResponse
      */
     public function store(StoreRoleRequest $request): JsonResponse
     {
-        $role = $this->roleService->create($request->only(
-            'name',
-            'guardName',
-            'permissionIds'
-        ));
+        $role = $this->roleService->create(
+            $request->only(
+                'name',
+                'guardName',
+                'permissionIds'
+            )
+        );
 
         return ResponseHelper::response(new RoleResource($role), Response::HTTP_OK);
     }
 
     /**
      * @param UpdateRoleRequest $request
+     * 
      * @return JsonResponse
      */
     public function update(UpdateRoleRequest $request): JsonResponse
     {
+        // TODO
         $role = $this->roleService->update(
             $request->only(
                 'id',
@@ -103,6 +110,7 @@ class RoleController extends Controller
     /**
      * @param Request $request
      * @param Role $role
+     * 
      * @return JsonResponse
      */
     public function delete(Request $request, Role $role): JsonResponse
@@ -114,6 +122,7 @@ class RoleController extends Controller
 
     /**
      * @param Request $request
+     * 
      * @return JsonResponse
      */
     public function getPermissions(Request $request): JsonResponse

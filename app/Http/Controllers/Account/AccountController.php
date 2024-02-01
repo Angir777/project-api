@@ -24,6 +24,7 @@ class AccountController extends Controller
 
     /**
      * @param ChangePasswordRequest $request
+     * 
      * @return JsonResponse
      */
     public function changePassword(ChangePasswordRequest $request): JsonResponse

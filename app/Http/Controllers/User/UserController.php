@@ -28,6 +28,7 @@ class UserController extends Controller
 
     /**
      * @param Request $request
+     * 
      * @return JsonResponse
      */
     public function getAll(Request $request): JsonResponse
@@ -37,9 +38,9 @@ class UserController extends Controller
         return ResponseHelper::response(UserResource::collection($data), Response::HTTP_OK);
     }
 
-
     /**
      * @param Request $request
+     * 
      * @return JsonResponse
      */
     public function query(Request $request): JsonResponse
@@ -58,6 +59,7 @@ class UserController extends Controller
 
     /**
      * @param Request $request
+     * 
      * @return JsonResponse
      */
     public function queryDeleted(Request $request): JsonResponse
@@ -79,7 +81,7 @@ class UserController extends Controller
     /**
      * @param Request $request
      * @param User $user
-     *
+     * 
      * @return JsonResponse
      */
     public function getById(Request $request, User $user): JsonResponse
@@ -89,6 +91,7 @@ class UserController extends Controller
 
     /**
      * @param StoreUserRequest $request
+     * 
      * @return JsonResponse
      */
     public function create(StoreUserRequest $request): JsonResponse
@@ -98,7 +101,7 @@ class UserController extends Controller
                 'name',
                 'email',
                 'confirmed',
-                'roles',    // Array with ids roles.
+                'roles',
             )
         );
 
@@ -107,17 +110,20 @@ class UserController extends Controller
 
     /**
      * @param UpdateUserRequest $request
+     * 
      * @return JsonResponse
      */
     public function update(UpdateUserRequest $request): JsonResponse
     {
-        $res = $this->userService->update($request->only(
-            'id',
-            'name',
-            'email',
-            'confirmed',
-            'roles',    // Array with ids roles.
-        ));
+        $res = $this->userService->update(
+            $request->only(
+                'id',
+                'name',
+                'email',
+                'confirmed',
+                'roles',
+            )
+        );
 
         return ResponseHelper::response(new UserResource($res), Response::HTTP_OK);
     }
@@ -125,7 +131,7 @@ class UserController extends Controller
     /**
      * @param Request $request
      * @param User $user
-     *
+     * 
      * @return JsonResponse
      */
     public function delete(Request $request, User $user): JsonResponse
@@ -138,6 +144,7 @@ class UserController extends Controller
     /**
      * @param Request $request
      * @param mixed $id
+     * 
      * @return JsonResponse
      */
     public function restore(Request $request, $id): JsonResponse
@@ -150,6 +157,7 @@ class UserController extends Controller
     /**
      * @param ChangeUserPasswordRequest $request
      * @param User $user
+     * 
      * @return JsonResponse
      */
     public function changePassword(ChangeUserPasswordRequest $request, User $user): JsonResponse

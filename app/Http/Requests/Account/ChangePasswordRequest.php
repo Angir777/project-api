@@ -15,7 +15,7 @@ class ChangePasswordRequest extends BaseApiRequest
     {
         return [
             'oldPassword' => 'required',
-            'password' => 'required|string|min:6|max:191|confirmed',
+            'password' => ['required', 'string', 'min:6', 'max:191', 'confirmed'],
         ];
     }
 }

@@ -70,6 +70,7 @@ class RoleService
 
     /**
      * @param mixed $data
+     * 
      * @return Role
      */
     public function create($data): Role
@@ -86,7 +87,7 @@ class RoleService
                 );
             }
 
-            // Powiązanie z wybranymi uprawnieniami
+            // Association with selected permissions
             foreach ($data['permissionIds'] as $pId) {
                 $permission = Permission::find($pId);
 
@@ -103,6 +104,7 @@ class RoleService
 
     /**
      * @param mixed $data
+     * 
      * @return Role
      */
     public function update($data): Role
@@ -127,10 +129,10 @@ class RoleService
                 );
             }
 
-            // Usunięcie starych powiązań z uprawnieniami
+            // Removal of old permission associations
             $role->syncPermissions();
 
-            // Powiązanie z wybranymi uprawnieniami
+            // Association with selected permissions
             foreach ($data['permissionIds'] as $pId) {
                 $permission = Permission::find($pId);
 
@@ -149,11 +151,13 @@ class RoleService
 
     /**
      * @param Role $role
+     * 
      * @return Role
      */
     public function delete(Role $role): Role
     {
         $res = $role->delete();
+        
         if (!$res) {
             throw new HttpResponseException(
                 response()->json(['error' => 'CANT_DELETE'], Response::HTTP_UNPROCESSABLE_ENTITY)

@@ -9,19 +9,20 @@ use Laravel\Passport\Token;
 class LogoutService
 {
     /**
-     * Wylogowanie z aplikacji
+     * Logging out of the application
      *
      * @return string[]
      */
     public function logout(): array
     {
         $user = Auth::user();
+        
         if (!config('auth.on_logout_revoke_all_tokens')) {
-            // Wylogowanie tylko z aktualnego urządzenia (pozostałe tokeny zostają aktywne)
+            // Log out only from the current device (other tokens remain active)
             $userToken = $user->token();
             $userToken->revoke();
         } else {
-            // Wylogowanie ze wszystkich urządzeń
+            // Log out of all devices
             $tokens = $user->tokens->pluck('id');
             Token::whereIn('id', $tokens)->update(['revoked' => true]);
             RefreshToken::whereIn('access_token_id', $tokens)->update(['revoked' => true]);

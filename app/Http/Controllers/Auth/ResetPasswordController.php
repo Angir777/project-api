@@ -24,17 +24,18 @@ class ResetPasswordController extends Controller
     }
 
     /**
-     * Krok 1
-     * Użytkownik wysyła prośbę do API o zresetowanie hasła.
-     * Prośba wysyłana jest z APP więc mamy jej adres by potem dokonać zwrotu linka w mailu.
-     * Użytkownik klikająć link w mailu zostaje spowrotem przeniesiony do APP na widok resetowania hasła.
+     * Step 1
+     * The user sends a request to the API to reset the password.
+     * The request is sent from the APP, so we have its address and then return the link in the e-mail.
+     * By clicking the link in the email, the user is taken back to the APP with a password reset view.
      *
      * @param SendResetPasswordEmailRequest $request
+     * 
      * @return JsonResponse
      */
     public function sendResetPasswordEmail(SendResetPasswordEmailRequest $request): JsonResponse
     {
-        // Adres do przekierowania w mailu.
+        // Redirection address in e-mail.
         $redirectUrl = $request->gatewayUrl ?? null;
 
         $user = User::where('email', 'like', $request->email)->first();
@@ -49,10 +50,11 @@ class ResetPasswordController extends Controller
     }
 
     /**
-     * Krok 2
-     * Użytkownik mający aktywny token (ten przesłany w mailu) może zmienić swoje aktualne hasło
+     * Step 2
+     * The user with an active token (the one sent in the e-mail) can change his current password
      *
      * @param ResetPasswordRequest $request
+     * 
      * @return JsonResponse
      */
     public function resetPassword(ResetPasswordRequest $request): JsonResponse

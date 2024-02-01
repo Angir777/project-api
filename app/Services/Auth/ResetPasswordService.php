@@ -16,6 +16,7 @@ class ResetPasswordService
     /**
      * @param User $user
      * @param mixed $redirectUrl
+     * 
      * @return User
      */
     public function sendResetPasswordEmail(User $user, $redirectUrl): User
@@ -43,6 +44,7 @@ class ResetPasswordService
      * @param mixed $email
      * @param mixed $token
      * @param mixed $password
+     * 
      * @return User
      */
     public function resetPassword($email, $token, $password): User

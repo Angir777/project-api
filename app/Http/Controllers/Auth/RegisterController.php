@@ -25,22 +25,23 @@ class RegisterController extends Controller
     }
 
     /**
-     * Rejestracja używa serwisu od użytkownika. Po pomyślnej rejestracji
-     * API zwraca odpowiedź i obiekt nowo utworzonego użytkownika.
+     * Registration uses the website from the user. After successful registration
+     * the API returns the response and object of the newly created user.
      *
      * @param RegisterRequest $request
+     * 
      * @return JsonResponse
      */
     public function register(RegisterRequest $request): JsonResponse
     {
-        // Sprawdzenie czy użytkownicy mogą się rejestrować
+        // Check if users can register
         if (!config('access.registration')) {
             throw new HttpResponseException(
                 ResponseHelper::response(['error' => 'REGISTRATION_DISABLED'], Response::HTTP_NOT_FOUND)
             );
         }
 
-        // Tworzenie nowego użytkownika
+        // Creating a new user
         $data = $this->userService->create($request->validated());
 
         return ResponseHelper::response(new UserResource($data), Response::HTTP_OK);

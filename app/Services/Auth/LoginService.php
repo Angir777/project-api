@@ -11,8 +11,8 @@ use Symfony\Component\HttpFoundation\Response;
 class LoginService
 {
     /**
-     * @param string $email
-     * @param string $password
+     * @param mixed $data
+     * 
      * @return JsonResponse
      */
     public function login($data): JsonResponse

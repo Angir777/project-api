@@ -29,6 +29,7 @@ class LoginController extends Controller
 
     /**
      * @param LoginRequest $request
+     * 
      * @return JsonResponse
      */
     public function login(LoginRequest $request): JsonResponse
@@ -40,6 +41,7 @@ class LoginController extends Controller
 
     /**
      * @param Request $request
+     * 
      * @return JsonResponse
      */
     public function logout(Request $request): JsonResponse
@@ -49,11 +51,12 @@ class LoginController extends Controller
 
     /**
      * @param Request $request
+     * 
      * @return JsonResponse
      */
     public function getAdminsEmails(Request $request): JsonResponse
     {
-        // Wyświetlenie na stronie logowania adresów email administratorów
+        // Displaying administrators' email addresses on the login page
         $adminEmails = User::whereHas(
             'roles', function($q){
                 $q->where('name', config('access.roles.admin_role'));

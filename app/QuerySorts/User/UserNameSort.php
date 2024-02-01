@@ -12,7 +12,7 @@ class UserNameSort implements Sort
         $direction = $descending ? 'DESC' : 'ASC';
 
         $query->orderBy('first_name', $direction)
-            ->orderBy('last_name', $direction)
-            ->select('users.*');
+              ->orderBy('last_name', $direction)
+              ->select('users.*');
     }
 }
