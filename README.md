@@ -108,6 +108,9 @@ composer create-project laravel/laravel project-api
 <code>sail artisan queue:table
 sail artisan migrate</code>
 
+## Szablon maili
+<code>sail artisan vendor:publish --tag=laravel-notifications</code>
+
 ## Podstawowe routs, migracje, seedery, modele, controllery od logowania i widoków users i roles
 
 ## Testy

@@ -59,6 +59,10 @@ return [
 
     'asset_url' => env('ASSET_URL'),
 
+    'gateway_url' => env('GATEWAY_URL', null),
+
+    'gateway_use_hash' => env('GATEWAY_USE_HASH', null),
+
     /*
     |--------------------------------------------------------------------------
     | Application Timezone
@@ -83,7 +87,7 @@ return [
     |
     */
 
-    'locale' => 'en',
+    'locale' => env('LOCALE', 'en'),
 
     /*
     |--------------------------------------------------------------------------
@@ -96,7 +100,7 @@ return [
     |
     */
 
-    'fallback_locale' => 'en',
+    'fallback_locale' => env('FALLBACK_LOCALE', 'en'),
 
     /*
     |--------------------------------------------------------------------------
@@ -109,7 +113,7 @@ return [
     |
     */
 
-    'faker_locale' => 'en_US',
+    'faker_locale' => env('FAKER_LOCALE', 'en_US'),
 
     /*
     |--------------------------------------------------------------------------
