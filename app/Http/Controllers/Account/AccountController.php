@@ -8,6 +8,7 @@ use App\Http\Requests\Account\ChangePasswordRequest;
 use App\Http\Resources\User\UserResource;
 use App\Services\Account\AccountService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class AccountController extends Controller
@@ -29,9 +30,19 @@ class AccountController extends Controller
      */
     public function changePassword(ChangePasswordRequest $request): JsonResponse
     {
-        $user = $this->accountService->changePassword(
-            $request->only('oldPassword', 'password')
-        );
+        $user = $this->accountService->changePassword($request->validated());
+
+        return ResponseHelper::response(new UserResource($user), Response::HTTP_OK);
+    }
+
+    /**
+     * @param Request $request
+     * 
+     * @return JsonResponse
+     */
+    public function daleteAccount(Request $request): JsonResponse
+    {
+        $user = $this->accountService->daleteAccount();
 
         return ResponseHelper::response(new UserResource($user), Response::HTTP_OK);
     }

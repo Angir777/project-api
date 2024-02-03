@@ -2,6 +2,7 @@
 
 namespace App\Services\Account;
 
+use App\Enums\Auth\PermissionNamesEnum;
 use App\Helpers\Response\ResponseHelper;
 use App\Models\User\User;
 use Illuminate\Support\Facades\Auth;
@@ -50,9 +51,33 @@ class AccountService
         return $user;
     }
 
-    // TODO Czy to potrzebne?
-    public function testSum($x, $y) {
-        $res = $x + $y;
-        return $res;
+    /**
+     * @return User
+     */
+    public function daleteAccount(): User
+    {
+        $user = Auth::user();
+
+        if ($user->hasPermissionTo(PermissionNamesEnum::SUPER_ADMIN)) {
+            
+            throw new HttpResponseException(
+                ResponseHelper::response(['error' => 'CANT_DELETE_SUPER_ADMIN_ACCOUNT'], Response::HTTP_NOT_FOUND)
+            );
+
+        } else {
+            // Does the user exist?
+            $user = User::find(Auth::user()->id);
+
+            if (!$user) {
+                throw new HttpResponseException(
+                    ResponseHelper::response(['error' => 'CANT_FIND_USER'], Response::HTTP_NOT_FOUND)
+                );
+            }
+
+            // Soft delete account
+            $user->delete();
+        }
+
+        return $user;
     }
 }
