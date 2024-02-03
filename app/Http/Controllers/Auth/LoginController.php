@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Helpers\Response\ResponseHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Http\Requests\Auth\LogoutRequest;
 use App\Models\User\User;
 use App\Services\Auth\LoginService;
 use App\Services\Auth\LogoutService;
@@ -34,9 +35,7 @@ class LoginController extends Controller
      */
     public function login(LoginRequest $request): JsonResponse
     {
-        return $this->loginService->login(
-            $request->only('email', 'password')
-        );
+        return $this->loginService->login($request->validated());
     }
 
     /**
@@ -44,9 +43,9 @@ class LoginController extends Controller
      * 
      * @return JsonResponse
      */
-    public function logout(Request $request): JsonResponse
+    public function logout(LogoutRequest $request): JsonResponse
     {
-        return ResponseHelper::response($this->logoutService->logout(), 200);
+        return ResponseHelper::response($this->logoutService->logout($request->validated()), 200);
     }
 
     /**

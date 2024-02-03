@@ -41,17 +41,15 @@ class ResetPasswordService
     }
 
     /**
-     * @param mixed $email
-     * @param mixed $token
-     * @param mixed $password
+     * @param mixed $data
      * 
      * @return User
      */
-    public function resetPassword($email, $token, $password): User
+    public function resetPassword($data): User
     {
         $passwordReset = PasswordReset::where([
-            ['token', '=', $token],
-            ['email', '=', $email]
+            ['token', '=', $data['token']],
+            ['email', '=', $data['email']]
         ])->first();
 
         if (!$passwordReset) {
@@ -77,7 +75,7 @@ class ResetPasswordService
         }
 
         $res = $user->update([
-            'password' => Hash::make($password),
+            'password' => Hash::make($data['password']),
         ]);
 
         if (!$res) {

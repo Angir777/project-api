@@ -59,7 +59,7 @@ class ResetPasswordController extends Controller
      */
     public function resetPassword(ResetPasswordRequest $request): JsonResponse
     {
-        $this->resetPasswordService->resetPassword($request->email, $request->token, $request->password);
+        $this->resetPasswordService->resetPassword($request->validated());
 
         return ResponseHelper::response('PASSWORD_CHANGED', Response::HTTP_OK);
     }
