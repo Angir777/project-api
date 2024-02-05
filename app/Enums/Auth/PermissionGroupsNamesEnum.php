@@ -9,4 +9,6 @@ abstract class PermissionGroupsNamesEnum
 {
     const ADMINISTRATION = 'ADMINISTRATION';
     const GENERAL = 'GENERAL';
+
+    const TEST_PERMISSION_GROUP = 'TEST_PERMISSION_GROUP';
 }

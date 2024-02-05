@@ -22,4 +22,9 @@ abstract class PermissionNamesEnum
     // Uprawnienia związane z zarządzaniem rolami
     const ROLE_ACCESS = 'ROLE_ACCESS';
     const ROLE_MANAGE = 'ROLE_MANAGE';
+
+    // Nowe przykładowe uprawnienie dla nowej grupy, dodawane z konsoli 
+    // 'sail composer refresh-permissions'
+    const TEST_PERMISSION_ACCESS = 'TEST_PERMISSION_ACCESS';
+    const TEST_PERMISSION_MANAGE = 'TEST_PERMISSION_MANAGE';
 }

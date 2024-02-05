@@ -8,6 +8,5 @@ Route::group([
     'middleware' => 'auth:api'
 ], function () {
     Route::patch('change-password', [AccountController::class, 'changePassword']);
-
     Route::delete('dalete-account', [AccountController::class, 'daleteAccount']);
 });
