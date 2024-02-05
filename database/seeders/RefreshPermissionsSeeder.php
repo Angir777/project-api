@@ -91,7 +91,7 @@ class RefreshPermissionsSeeder extends Seeder
                     $rola->revokePermissionTo($deletedPermissions);
                     // Usuwamy powiązania związane z tą rolą w tabeli role_has_permissions
                     // UWAGA! Usunięte zostanie powiązanie roli z danym uprawnieniem, 
-                    // czyli dana rola (użytkownik też jesli posiada tę rolę) już nie będzie miała tego danego uprawnienia.
+                    // czyli dana rola (użytkownik też jesli posiada tę rolę) już nie będzie miała tego danego uprawnienia
                     $rola->permissions()->detach(Permission::whereIn('name', $deletedPermissions)->pluck('id'));
                 }
             }
