@@ -2,6 +2,10 @@
 
 namespace App\Services\Auth;
 
+use App\Helpers\Response\ResponseHelper;
+use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Passport\RefreshToken;
 use Laravel\Passport\Token;
@@ -15,15 +19,14 @@ class LogoutService
      * 
      * @return array
      */
-    public function logout($data): array
+    public function logout($data): JsonResponse
     {
         $user = Auth::user();
 
         // The user makes decisions
         if (isset($data['revoke_all'])) {
-            $revokeAll = $data['revoke_all'];
-
-            if ($revokeAll) {
+            // User choice
+            if ($data['revoke_all']) {
                 $this->revokeAllDevices($user);
             } else {
                 $this->revokeCurrentDevice($user);
@@ -37,13 +40,16 @@ class LogoutService
             }
         }
 
-        return ['message' => 'Successfully logged out!'];
+        throw new HttpResponseException(
+            ResponseHelper::response(['success' => 'LOGGED_OUT'], Response::HTTP_OK)
+        );
     }
 
     /**
      * @param mixed $user
      */
-    private function revokeAllDevices($user) {
+    private function revokeAllDevices($user)
+    {
         // Log out of all devices
         $tokens = $user->tokens->pluck('id');
         Token::whereIn('id', $tokens)->update(['revoked' => true]);
@@ -53,7 +59,8 @@ class LogoutService
     /**
      * @param mixed $user
      */
-    private function revokeCurrentDevice($user) {
+    private function revokeCurrentDevice($user)
+    {
         // Log out only from the current device (other tokens remain active)
         $userToken = $user->token();
         $userToken->revoke();

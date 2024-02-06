@@ -11,7 +11,7 @@ Route::group([
     Route::get('/get-all', [RoleController::class, 'getAll'])->middleware(['permission:ADMIN']);
 
     // Możliwość pobrania słownika z uprawnieniami w edycji roli
-    Route::get('/getPermissions', [RoleController::class, 'getPermissions'])->middleware(['permission:PERMISSION_ACCESS']);
+    Route::get('/get-permissions', [RoleController::class, 'getPermissions'])->middleware(['permission:PERMISSION_ACCESS']);
     
     Route::get('/', [RoleController::class, 'query'])->middleware(['permission:ROLE_ACCESS']);
     Route::get('/{role}', [RoleController::class, 'getById'])->where('role', '[0-9]+')->middleware(['permission:ROLE_ACCESS']);

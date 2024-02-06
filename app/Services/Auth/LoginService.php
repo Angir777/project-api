@@ -25,6 +25,6 @@ class LoginService
             return ResponseHelper::response(new AuthResource($user), Response::HTTP_OK);
         }
 
-        return response()->json(['error' => 'Invalid credentials'], 401);
+        return ResponseHelper::response(['error' => 'INVALID_CREDENTIALS'], Response::HTTP_UNAUTHORIZED);
     }
 }

@@ -76,13 +76,7 @@ class RoleController extends Controller
      */
     public function store(StoreRoleRequest $request): JsonResponse
     {
-        $role = $this->roleService->create(
-            $request->only(
-                'name',
-                'guardName',
-                'permissionIds'
-            )
-        );
+        $role = $this->roleService->create($request->validated());
 
         return ResponseHelper::response(new RoleResource($role), Response::HTTP_OK);
     }
@@ -94,15 +88,7 @@ class RoleController extends Controller
      */
     public function update(UpdateRoleRequest $request): JsonResponse
     {
-        // TODO
-        $role = $this->roleService->update(
-            $request->only(
-                'id',
-                'name',
-                'guardName',
-                'permissionIds'
-            )
-        );
+        $role = $this->roleService->update($request->validated());
 
         return ResponseHelper::response(new RoleResource($role), Response::HTTP_OK);
     }
@@ -127,7 +113,7 @@ class RoleController extends Controller
      */
     public function getPermissions(Request $request): JsonResponse
     {
-        $permissions = Permission::with('group')->get();
+        $permissions = Permission::all();
 
         return ResponseHelper::response(PermissionResource::collection($permissions), Response::HTTP_OK);
     }

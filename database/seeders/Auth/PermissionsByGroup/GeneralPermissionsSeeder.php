@@ -5,7 +5,6 @@ namespace Database\Seeders\Auth\PermissionsByGroup;
 use App\Enums\Auth\PermissionGroupsNamesEnum;
 use App\Enums\Auth\PermissionNamesEnum;
 use App\Models\Auth\Permission;
-use App\Models\Auth\PermissionGroup;
 use Illuminate\Database\Seeder;
 
 /**
@@ -20,15 +19,6 @@ class GeneralPermissionsSeeder extends Seeder
      */
     public function run()
     {
-        $generalGroup = PermissionGroup::where('name', 'like', PermissionGroupsNamesEnum::GENERAL)->first();
-
-        if ($generalGroup == null)
-        {
-            $generalGroup = PermissionGroup::create([
-                'name' => PermissionGroupsNamesEnum::GENERAL
-            ]);
-        }
-
         // Tablica zawierajaca wszystkie uprawnienia z danej grupy
         $generalPermissions = array(
             PermissionNamesEnum::USER,
@@ -41,7 +31,7 @@ class GeneralPermissionsSeeder extends Seeder
                 Permission::create([
                     'name' => $permission,
                     'guard_name' => config('access.default_guard_name'),
-                    'permission_group_id' => $generalGroup->id
+                    'permission_group_name' => PermissionGroupsNamesEnum::GENERAL
                 ]);
             }
         }

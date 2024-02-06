@@ -11,10 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('permission_groups', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->string('name');
-            $table->timestamps();
+        Schema::table('permissions', function (Blueprint $table) {
+            $table->string('permission_group_name')->after('guard_name');
         });
     }
 
@@ -23,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('permission_groups');
+        Schema::table('permissions', function (Blueprint $table) {
+            $table->dropColumn('permission_group_name');
+        });
     }
 };

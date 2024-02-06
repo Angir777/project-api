@@ -64,18 +64,24 @@ class AccountService
                 ResponseHelper::response(['error' => 'CANT_DELETE_SUPER_ADMIN_ACCOUNT'], Response::HTTP_NOT_FOUND)
             );
 
-        } else {
-            // Does the user exist?
-            $user = User::find(Auth::user()->id);
+        }
 
-            if (!$user) {
-                throw new HttpResponseException(
-                    ResponseHelper::response(['error' => 'CANT_FIND_USER'], Response::HTTP_NOT_FOUND)
-                );
-            }
+        // Does the user exist?
+        $user = User::find(Auth::user()->id);
 
-            // Soft delete account
-            $user->delete();
+        if (!$user) {
+            throw new HttpResponseException(
+                ResponseHelper::response(['error' => 'CANT_FIND_USER'], Response::HTTP_NOT_FOUND)
+            );
+        }
+
+        // Soft delete account
+        $res = $user->delete();
+
+        if (!$res) {
+            throw new HttpResponseException(
+                ResponseHelper::response(['error' => 'CANT_DELETE'], Response::HTTP_UNPROCESSABLE_ENTITY)
+            );
         }
 
         return $user;

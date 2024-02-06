@@ -15,8 +15,8 @@ class StoreRoleRequest extends BaseApiRequest
     {
         return [
             'name' => 'required',
-            'guardName' => 'required'
-            // TODO
+            'guardName' => 'required',
+            'permissionIds' => ['required', 'array']
         ];
     }
 }

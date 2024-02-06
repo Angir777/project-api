@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use App\Enums\Auth\PermissionGroupsNamesEnum;
 use App\Enums\Auth\PermissionNamesEnum;
 use App\Models\Auth\Permission;
-use App\Models\Auth\PermissionGroup;
 use App\Models\Role\Role;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -32,24 +31,12 @@ class RefreshPermissionsSeeder extends Seeder
 
             // Pobranie aktualnych uprawnień, które są na bazie danych 
             // (oprócz uprawnień podstawowych których nie ruszamy)
-            $actualPermissions = Permission::whereHas('group', function ($query) use ($basicGroups) {
-                $query->whereNotIn('name', $basicGroups);
-            })->pluck('name')->toArray();
+            $actualPermissions = Permission::whereNotIn('permission_group_name', $basicGroups)->pluck('name')->toArray();
 
             /**
              * Dodatkowe uprawnienia dla nowych modułów
-             * Należy dodać nową nazwę do 'PermissionGroupsNamesEnum' oraz uprawnienia do 'PermissionNamesEnum'
+             * Należy dodać nową nazwę grupy do 'PermissionGroupsNamesEnum' oraz uprawnienia do 'PermissionNamesEnum'
              */
-
-            // START NEW EXAMPLE MODULE
-            $newExampleGroup = PermissionGroup::where('name', 'like', PermissionGroupsNamesEnum::TEST_PERMISSION_GROUP)->first();
-            if ($newExampleGroup == null) {
-                // Utworzenie nowej grupy
-                // Przy usuwaniu uprawnień grupa zostanie automatycznie usunięta, jeśli nie będzie miała żadnych przypisanych uprawnień
-                $newExampleGroup = PermissionGroup::create([
-                    'name' => PermissionGroupsNamesEnum::TEST_PERMISSION_GROUP,
-                ]);
-            }
 
             // Uprawnienia dla nowej grupy
             // Jeśli grupa nie ma uprawnień (zostaną tutaj usunięte), to sama zostaje usunięta
@@ -63,7 +50,7 @@ class RefreshPermissionsSeeder extends Seeder
                     Permission::create([
                         'name' => $permission,
                         'guard_name' => 'web',
-                        'permission_group_id' => $newExampleGroup->id
+                        'permission_group_name' => PermissionGroupsNamesEnum::TEST_PERMISSION_GROUP
                     ]);
                 }
             }
@@ -101,19 +88,6 @@ class RefreshPermissionsSeeder extends Seeder
                 $oldPermission = Permission::where('name', $deletedPermission)->first();
                 // Usuwamy całkowicie uprawnienie
                 $oldPermission?->forceDelete();
-            }
-
-            // Usunięcie grupy, jeśli nie zawiera żadnych uprawnień
-            // (oprócz grup podstawowych których nie ruszamy)
-            $actualGroups = PermissionGroup::whereNotIn('name', $basicGroups)->get();
-            if ($actualGroups) {
-                foreach ($actualGroups as $group) {
-                    $permissionsCount = Permission::where('permission_group_id', $group->id)->count();
-                    if ($permissionsCount === 0) {
-                        // Jeśli dana grupa nie ma przypisanych żadnych uprawnień, usuwamy ją
-                        $group->delete();
-                    }
-                }
             }
         });
     }

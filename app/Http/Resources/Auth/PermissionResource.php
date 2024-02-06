@@ -18,7 +18,7 @@ class PermissionResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'permissionGroup' => $this->group != null ? new PermissionGroupResource($this->group) : null
+            'permissionGroupName' => $this->permission_group_name
         ];
     }
 }

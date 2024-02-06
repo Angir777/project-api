@@ -14,9 +14,10 @@ class UpdateRoleRequest extends BaseApiRequest
     public function rules(): array
     {
         return [
+            'id' => 'required',
             'name' => 'required',
-            'guardName' => 'required'
-            // TODO permissionIds + id
+            'guardName' => 'required',
+            'permissionIds' => ['required', 'array']
         ];
     }
 }

@@ -82,14 +82,15 @@ class RoleService
             ]);
 
             if (!$role) {
+// todo zobacz w account jak zwracane sa błedy
                 throw new HttpResponseException(
                     response()->json(['error' => 'CANT_CREATE_ROLE'], Response::HTTP_UNPROCESSABLE_ENTITY)
                 );
             }
 
             // Association with selected permissions
-            foreach ($data['permissionIds'] as $pId) {
-                $permission = Permission::find($pId);
+            foreach ($data['permissionIds'] as $permissionId) {
+                $permission = Permission::find($permissionId);
 
                 if (!$permission) {
                     throw new HttpResponseException(response()->json(['error' => 'PERMISSION_NOT_FOUND'], Response::HTTP_UNPROCESSABLE_ENTITY));
@@ -133,8 +134,8 @@ class RoleService
             $role->syncPermissions();
 
             // Association with selected permissions
-            foreach ($data['permissionIds'] as $pId) {
-                $permission = Permission::find($pId);
+            foreach ($data['permissionIds'] as $permissionId) {
+                $permission = Permission::find($permissionId);
 
                 if (!$permission) {
                     throw new HttpResponseException(
