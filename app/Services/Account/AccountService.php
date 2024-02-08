@@ -56,9 +56,7 @@ class AccountService
      */
     public function daleteAccount(): User
     {
-        $user = Auth::user();
-
-        if ($user->hasPermissionTo(PermissionNamesEnum::SUPER_ADMIN)) {
+        if (Auth::user()->hasPermissionTo(PermissionNamesEnum::SUPER_ADMIN)) {
             
             throw new HttpResponseException(
                 ResponseHelper::response(['error' => 'CANT_DELETE_SUPER_ADMIN_ACCOUNT'], Response::HTTP_NOT_FOUND)

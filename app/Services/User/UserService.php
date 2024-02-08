@@ -113,6 +113,7 @@ class UserService
 
         $user->email_verified_at = Carbon::now();
         $user->confirmed = true;
+
         $result = $user->save();
 
         if (!$result) {
@@ -132,7 +133,7 @@ class UserService
     {
         return DB::transaction(function () use ($data) {
 
-            // Jeśli konto jest zakładane przez administarcje, to zostaje wygenerowane przykładowe hasło
+            // If the account is created by the administration, a sample password is generated
             if (isset($data['password'])) {
                 $password = __('auth.email.account_activate.is_password');
                 $passwordHash = Hash::make($data['password']);
@@ -152,11 +153,11 @@ class UserService
 
             if (!$user) {
                 throw new HttpResponseException(
-                    response()->json(['error' => 'CANT_CREATE_USER_ACCOUNT'], Response::HTTP_UNPROCESSABLE_ENTITY)
+                    ResponseHelper::response(['error' => 'CANT_CREATE_USER_ACCOUNT'], Response::HTTP_UNPROCESSABLE_ENTITY)
                 );
             }
 
-            // Sprawdzenie czy zalogowany użytkownik może przypisać rolę 'SUPER_ADMIN' jeśli taka jest dodawana
+            // Checking whether the logged in user can assign the 'SUPER_ADMIN' role, if one is added
             if (isset($data['roles'])) {
                 foreach ($data['roles'] as $role) {
                     if ($role == config('access.roles.super_admin_role')) {
@@ -165,24 +166,24 @@ class UserService
                 }
             }
 
-            // Synchronizacja roli, usuniecie starych nadanie nowych
+            // Role synchronization, deleting old ones and adding new ones
             if (isset($data['roles']) && count($data['roles']) > 0) {
                 $user->syncRoles($data['roles']);
             } else {
                 $user->assignRole(config('access.roles.user_role'));
             }
 
-            // Wysłanie potwierdzenia założenia konta na email
+            // Sending confirmation of account creation via e-mail
             if (config('access.confirm_email')) {
                 if (!isset($data['confirmed']) || (isset($data['confirmed']) && $data['confirmed'] == false)) {
-                    // Wysyła maila z powitaniem i linkiem do potwierdzenia konta oraz z hasłem jeśli konto utworzone zostało w panelu administracyjnym
+                    // Sends an e-mail with a welcome message and a link to confirm the account, as well as a password if the account was created in the administration panel
                     $user->notify(new AccountConfirmationNotification($user->confirmation_code, $password));
                 } else {
-                    // Wysyła tylko maila z powitaniem i hasłem bo konto jest potwierdzone
+                    // It only sends an email with a welcome message and a password because the account is confirmed
                     $user->notify(new AccountConfirmationNotification(null, $password));
                 }
             } else {
-                // Wysyła tylko maila z powitaniem bo nie jest wymagane potwierdzenie konta
+                // It only sends a welcome email because account confirmation is not required
                 $user->notify(new AccountConfirmationNotification(null, $password));
             }
 
@@ -202,7 +203,7 @@ class UserService
 
             if ($user == null) {
                 throw new HttpResponseException(
-                    response()->json(['message' => 'USER_NOT_FOUND_IN_LOCAL_DB'], Response::HTTP_BAD_REQUEST)
+                    ResponseHelper::response(['error' => 'USER_NOT_FOUND_IN_LOCAL_DB'], Response::HTTP_BAD_REQUEST)
                 );
             }
 
@@ -215,16 +216,16 @@ class UserService
 
             if (!$res) {
                 throw new HttpResponseException(
-                    response()->json(['error' => 'CANT_UPDATE_USER_ACCOUNT'], Response::HTTP_UNPROCESSABLE_ENTITY)
+                    ResponseHelper::response(['error' => 'CANT_UPDATE_USER_ACCOUNT'], Response::HTTP_UNPROCESSABLE_ENTITY)
                 );
             }
 
-            // Sprawdzenie czy zalogowany użytkownik może edytować użytkownika, który ma rolę 'SUPER_ADMIN'
+            // Checking whether the logged in user can edit the user who has the 'SUPER_ADMIN' role
             if ($user->can(PermissionNamesEnum::SUPER_ADMIN)) {
                 $this->checkPermissionToSuperAdmin(Auth::User());
             }
 
-            // Synchronizacja roli, usuniecie starych i nadanie nowych
+            // Role synchronization, deleting old ones and adding new ones
             if (isset($data['roles']) && count($data['roles']) > 0) {
                 $user->syncRoles($data['roles']);
             } else {
@@ -241,15 +242,15 @@ class UserService
      */
     public function delete(User $user): User
     {
-        // Sprawdzenie czy zalogowany użytkownik może usunąć użytkownika, który ma rolę 'SUPER_ADMIN'
+        // Checking if the logged in user can delete a user who has the 'SUPER_ADMIN' role
         if ($user->can(PermissionNamesEnum::SUPER_ADMIN)) {
             $this->checkPermissionToSuperAdmin(Auth::User());
         }
 
-        // Użytkownik nie może sam siebie usunąć
+        // The user cannot delete himself
         if (Auth::user()->id == $user->id) {
             throw new HttpResponseException(
-                response()->json(['error' => 'CANT_DELETE_OWN_ACCOUNT'], Response::HTTP_BAD_REQUEST)
+                ResponseHelper::response(['error' => 'CANT_DELETE_OWN_ACCOUNT'], Response::HTTP_BAD_REQUEST)
             );
         }
 
@@ -257,7 +258,7 @@ class UserService
 
         if (!$res) {
             throw new HttpResponseException(
-                response()->json(['error' => 'CANT_DELETE'], Response::HTTP_UNPROCESSABLE_ENTITY)
+                ResponseHelper::response(['error' => 'CANT_DELETE'], Response::HTTP_UNPROCESSABLE_ENTITY)
             );
         }
 
@@ -274,11 +275,11 @@ class UserService
 
         if ($user == null) {
             throw new HttpResponseException(
-                response()->json(['message' => 'USER_NOT_FOUND'], Response::HTTP_BAD_REQUEST)
+                ResponseHelper::response(['error' => 'USER_NOT_FOUND'], Response::HTTP_BAD_REQUEST)
             );
         }
 
-        // Sprawdzenie, czy zalogowany użytkownik może przywrócić użytkownika, który ma rolę 'SUPER_ADMIN'
+        // Checking if the logged in user can restore a user who has the 'SUPER_ADMIN' role
         if ($user->can(PermissionNamesEnum::SUPER_ADMIN)) {
             $this->checkPermissionToSuperAdmin(Auth::User());
         }
@@ -287,7 +288,7 @@ class UserService
 
         if (!$res) {
             throw new HttpResponseException(
-                response()->json(['message' => 'CANT_RESTORE_USER'], Response::HTTP_BAD_REQUEST)
+                ResponseHelper::response(['error' => 'CANT_RESTORE_USER'], Response::HTTP_BAD_REQUEST)
             );
         }
 
@@ -296,18 +297,19 @@ class UserService
 
     /**
      * @param User $user
-     * @param mixed $password
+     * @param mixed $data
+     * 
      * @return User
      */
-    public function changePassword(User $user, $password): User
+    public function changePassword(User $user, $data): User
     {
-        // Sprawdzenie czy zalogowany użytkownik może zmienić hasło użytkownikowi, który ma rolę 'SUPER_ADMIN'
+        // Checking whether the logged in user can change the password of a user who has the 'SUPER_ADMIN' role
         if ($user->can(PermissionNamesEnum::SUPER_ADMIN)) {
             $this->checkPermissionToSuperAdmin(Auth::User());
         }
 
         $res = $user->update([
-            'password' => Hash::make($password)
+            'password' => Hash::make($data['password'])
         ]);
 
         if (!$res) {
@@ -320,8 +322,8 @@ class UserService
     }
 
     /**
-     * Sprawdza czy użytkownik posiada uprawnienie 'SUPER_ADMIN'
-     * Jeśli nie ma, to zwraca błąd
+     * Checks whether the user has the 'SUPER_ADMIN' permission
+     * If there is none, it returns an error
      *
      * @param mixed $user
      */
@@ -329,7 +331,7 @@ class UserService
     {
         if ($user->cannot(PermissionNamesEnum::SUPER_ADMIN)) {
             throw new HttpResponseException(
-                response()->json(['error' => 'YOU_ARE_NOT_A_SUPER_ADMIN'], Response::HTTP_UNPROCESSABLE_ENTITY)
+                ResponseHelper::response(['error' => 'YOU_ARE_NOT_A_SUPER_ADMIN'], Response::HTTP_UNPROCESSABLE_ENTITY)
             );
         }
     }

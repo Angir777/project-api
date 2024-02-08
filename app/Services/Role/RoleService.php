@@ -13,6 +13,7 @@ use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\AllowedSort;
 use Spatie\QueryBuilder\QueryBuilder;
 use Symfony\Component\HttpFoundation\Response;
+use App\Helpers\Response\ResponseHelper;
 
 class RoleService
 {
@@ -82,9 +83,8 @@ class RoleService
             ]);
 
             if (!$role) {
-// todo zobacz w account jak zwracane sa błedy
                 throw new HttpResponseException(
-                    response()->json(['error' => 'CANT_CREATE_ROLE'], Response::HTTP_UNPROCESSABLE_ENTITY)
+                    ResponseHelper::response(['error' => 'CANT_CREATE_ROLE'], Response::HTTP_UNPROCESSABLE_ENTITY)
                 );
             }
 
@@ -93,7 +93,9 @@ class RoleService
                 $permission = Permission::find($permissionId);
 
                 if (!$permission) {
-                    throw new HttpResponseException(response()->json(['error' => 'PERMISSION_NOT_FOUND'], Response::HTTP_UNPROCESSABLE_ENTITY));
+                    throw new HttpResponseException(
+                        ResponseHelper::response(['error' => 'PERMISSION_NOT_FOUND'], Response::HTTP_UNPROCESSABLE_ENTITY)
+                    );
                 }
 
                 $role->givePermissionTo($permission);
@@ -115,7 +117,7 @@ class RoleService
 
             if ($role == null) {
                 throw new HttpResponseException(
-                    response()->json(['message' => 'ROLE_NOT_FOUND'], Response::HTTP_BAD_REQUEST)
+                    ResponseHelper::response(['error' => 'ROLE_NOT_FOUND'], Response::HTTP_BAD_REQUEST)
                 );
             }
 
@@ -126,7 +128,7 @@ class RoleService
 
             if (!$res) {
                 throw new HttpResponseException(
-                    response()->json(['error' => 'CANT_UPDATE_ROLE'], Response::HTTP_UNPROCESSABLE_ENTITY)
+                    ResponseHelper::response(['error' => 'CANT_UPDATE_ROLE'], Response::HTTP_UNPROCESSABLE_ENTITY)
                 );
             }
 
@@ -139,7 +141,7 @@ class RoleService
 
                 if (!$permission) {
                     throw new HttpResponseException(
-                        response()->json(['error' => 'PERMISSION_NOT_FOUND'], Response::HTTP_UNPROCESSABLE_ENTITY)
+                        ResponseHelper::response(['error' => 'PERMISSION_NOT_FOUND'], Response::HTTP_UNPROCESSABLE_ENTITY)
                     );
                 }
 
@@ -161,7 +163,7 @@ class RoleService
         
         if (!$res) {
             throw new HttpResponseException(
-                response()->json(['error' => 'CANT_DELETE'], Response::HTTP_UNPROCESSABLE_ENTITY)
+                ResponseHelper::response(['error' => 'CANT_DELETE'], Response::HTTP_UNPROCESSABLE_ENTITY)
             );
         }
 

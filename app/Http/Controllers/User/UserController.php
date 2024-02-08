@@ -64,9 +64,7 @@ class UserController extends Controller
      */
     public function queryDeleted(Request $request): JsonResponse
     {
-        $pageSize = $request->pageSize ?? config('query-builder.default_page_size');
-
-        $page = $this->userService->queryDeleted($pageSize);
+        $page = $this->userService->queryDeleted();
 
         return ResponseHelper::pageResponse(
             UserResource::collection($page->items()),
@@ -96,14 +94,7 @@ class UserController extends Controller
      */
     public function create(StoreUserRequest $request): JsonResponse
     {
-        $res = $this->userService->create(
-            $request->only(
-                'name',
-                'email',
-                'confirmed',
-                'roles',
-            )
-        );
+        $res = $this->userService->create($request->validated());
 
         return ResponseHelper::response(new UserResource($res), Response::HTTP_OK);
     }
@@ -115,15 +106,7 @@ class UserController extends Controller
      */
     public function update(UpdateUserRequest $request): JsonResponse
     {
-        $res = $this->userService->update(
-            $request->only(
-                'id',
-                'name',
-                'email',
-                'confirmed',
-                'roles',
-            )
-        );
+        $res = $this->userService->update($request->validated());
 
         return ResponseHelper::response(new UserResource($res), Response::HTTP_OK);
     }
@@ -162,7 +145,12 @@ class UserController extends Controller
      */
     public function changePassword(ChangeUserPasswordRequest $request, User $user): JsonResponse
     {
-        $user = $this->userService->changePassword($user, $request->password);
+        $user = $this->userService->changePassword(
+            $user, 
+            $request->only(
+                'password'
+            )
+        );
 
         return ResponseHelper::response(new UserResource($user), Response::HTTP_OK);
     }

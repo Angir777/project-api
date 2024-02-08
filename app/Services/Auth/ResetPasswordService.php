@@ -10,6 +10,7 @@ use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
+use App\Helpers\Response\ResponseHelper;
 
 class ResetPasswordService
 {
@@ -54,7 +55,7 @@ class ResetPasswordService
 
         if (!$passwordReset) {
             throw new HttpResponseException(
-                response()->json(['error' => 'TOKEN_INVALID'], Response::HTTP_BAD_REQUEST)
+                ResponseHelper::response(['error' => 'TOKEN_INVALID'], Response::HTTP_BAD_REQUEST)
             );
         }
 
@@ -62,7 +63,7 @@ class ResetPasswordService
             $passwordReset->delete();
 
             throw new HttpResponseException(
-                response()->json(['error' => 'TOKEN_EXPIRED'], Response::HTTP_BAD_REQUEST)
+                ResponseHelper::response(['error' => 'TOKEN_EXPIRED'], Response::HTTP_BAD_REQUEST)
             );
         }
 
@@ -70,7 +71,7 @@ class ResetPasswordService
 
         if (!$user) {
             throw new HttpResponseException(
-                response()->json(['error' => 'CANT_FIND_USER'], Response::HTTP_BAD_REQUEST)
+                ResponseHelper::response(['error' => 'CANT_FIND_USER'], Response::HTTP_BAD_REQUEST)
             );
         }
 
@@ -80,7 +81,7 @@ class ResetPasswordService
 
         if (!$res) {
             throw new HttpResponseException(
-                response()->json(['error' => 'CANT_RESET_PASSWORD'], Response::HTTP_BAD_REQUEST)
+                ResponseHelper::response(['error' => 'CANT_RESET_PASSWORD'], Response::HTTP_BAD_REQUEST)
             );
         }
 
