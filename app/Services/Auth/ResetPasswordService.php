@@ -71,7 +71,7 @@ class ResetPasswordService
 
         if (!$user) {
             throw new HttpResponseException(
-                ResponseHelper::response(['error' => 'CANT_FIND_USER'], Response::HTTP_BAD_REQUEST)
+                ResponseHelper::response(['error' => 'USER_NOT_FOUND'], Response::HTTP_BAD_REQUEST)
             );
         }
 

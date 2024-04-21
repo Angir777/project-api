@@ -18,6 +18,7 @@ class RegisterRequest extends BaseApiRequest
             'name' => ['required', 'string', 'max:191'],
             'email' => ['required', 'string', 'email', 'max:191', Rule::unique('users')],
             'password' => ['required', 'string', 'min:6', 'max:191', 'confirmed'],
+            'acceptance_regulations' => ['required', 'boolean'],
         ];
     }
 }

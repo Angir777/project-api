@@ -41,6 +41,15 @@ class RegisterController extends Controller
             );
         }
 
+        // Acceptance regulations
+        if (!isset($request['acceptance_regulations']) || (
+            (isset($request['acceptance_regulations'])) && !$request['acceptance_regulations']
+        )) {
+            throw new HttpResponseException(
+                ResponseHelper::response(['error' => 'YOU_DONT_ACCEPTANCE_REGULATIONS'], Response::HTTP_UNPROCESSABLE_ENTITY)
+            );
+        }
+
         // Creating a new user
         $data = $this->userService->create($request->validated());
 

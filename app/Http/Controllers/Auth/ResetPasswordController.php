@@ -8,6 +8,7 @@ use App\Http\Requests\Auth\ResetPasswordRequest;
 use App\Http\Requests\Auth\SendResetPasswordEmailRequest;
 use App\Models\User\User;
 use App\Services\Auth\ResetPasswordService;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -41,7 +42,9 @@ class ResetPasswordController extends Controller
         $user = User::where('email', 'like', $request->email)->first();
 
         if (!$user) {
-            return ResponseHelper::response('USER_NOT_FOUND', Response::HTTP_OK);
+            throw new HttpResponseException(
+                ResponseHelper::response(['error' => 'USER_NOT_FOUND'], Response::HTTP_BAD_REQUEST)
+            );
         }
 
         $this->resetPasswordService->sendResetPasswordEmail($user, $redirectUrl);
