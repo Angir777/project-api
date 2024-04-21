@@ -25,8 +25,9 @@ class ResetPasswordService
         $passwordReset = PasswordReset::where('email', '=', $user->email)->first();
 
         if ($passwordReset) {
-            $passwordReset->token = Str::random(60);
-            $passwordReset->save();
+            throw new HttpResponseException(
+                ResponseHelper::response(['error' => 'TOKEN_EXISTS'], Response::HTTP_BAD_REQUEST)
+            );
         } else {
             $passwordReset = PasswordReset::create([
                 'email' => $user->email,
