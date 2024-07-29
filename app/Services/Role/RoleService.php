@@ -14,6 +14,7 @@ use Spatie\QueryBuilder\AllowedSort;
 use Spatie\QueryBuilder\QueryBuilder;
 use Symfony\Component\HttpFoundation\Response;
 use App\Helpers\Response\ResponseHelper;
+use Illuminate\Support\Facades\Log;
 
 class RoleService
 {
@@ -159,6 +160,12 @@ class RoleService
      */
     public function delete(Role $role): Role
     {
+        if ($role->name == config('access.roles.super_admin_role')) {
+            throw new HttpResponseException(
+                ResponseHelper::response(['error' => 'CANT_DELETE_SUPER_ADMIN_ROLE'], Response::HTTP_UNPROCESSABLE_ENTITY)
+            );
+        }
+
         $res = $role->delete();
         
         if (!$res) {
