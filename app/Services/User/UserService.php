@@ -7,6 +7,7 @@ use App\Helpers\Request\RequestHelper;
 use App\Helpers\Response\ResponseHelper;
 use App\Models\User\User;
 use App\Notifications\Auth\AccountConfirmationNotification;
+use App\QueryFilters\User\UserDateDeleteFilter;
 use App\QueryFilters\User\UserRolesFilter;
 use App\QuerySorts\User\UserRoleSort;
 use Carbon\Carbon;
@@ -49,7 +50,7 @@ class UserService
             AllowedFilter::partial('emailVerifiedAt', 'email_verified_at'),
             AllowedFilter::partial('createdAt', 'created_at'),
             AllowedFilter::partial('updatedAt', 'updated_at'),
-            AllowedFilter::partial('deletedAt', 'deleted_at'),
+            AllowedFilter::custom('deletedAt', new UserDateDeleteFilter),
             AllowedFilter::custom('roles', new UserRolesFilter),
         ];
     }
