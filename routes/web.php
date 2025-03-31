@@ -23,16 +23,12 @@ Route::get('/', function () {
         'API clients' => [
             'Angular' => [
                 'name' => 'project-app',
-                'status' => 'Progress'
+                'url' => 'https://github.com/Angir777/project-angular'
             ],
             'React' => [
-                'name' => 'project-next',
-                'status' => 'Future'
-            ],
-            'Mobile' => [
-                'name' => 'project-native',
-                'status' => 'Future'
-            ],
+                'name' => 'project-react',
+                'url' => 'https://github.com/Angir777/project-react'
+            ]
         ],
         'Routs' => [
             'basic-tests' => [
