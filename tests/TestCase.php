@@ -36,14 +36,15 @@ abstract class TestCase extends BaseTestCase
      */
 
     // Adres do API
-    protected $apiUrl = "/api/v1";
+    protected $apiUrl = "/api";
 
     // Wywoływane przed każdym testem
     protected function setUp(): void
     {
         parent::setUp();
-        Artisan::call('migrate:fresh --seed');
-        Artisan::call('passport:install --force');
+        // Artisan::call('migrate:fresh --seed');
+        // Artisan::call('passport:install --force');
+        // sail artisan passport:install --env=testingclear
     }
 
     // Wywoływane na koniec każdego testu
